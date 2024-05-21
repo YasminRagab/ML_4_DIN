@@ -21,7 +21,7 @@ This Flask application classifies walls as per DIN 276 standards using machine l
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/your-username/your-repository.git
+   git clone https://github.com/YasminRagab/ML_4_DIN.git
    cd your-repository
 
 2. **Create and activate a virtual environment**:
