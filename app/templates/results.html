@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Prediction Results</title>
+  </head>
+  <body>
+    <h1>Prediction Results</h1>
+
+    <h2>LGBM Model</h2>
+    <p>F1 Score: {{ results.lgbm_f1 }}</p>
+    <img src="{{ url_for('static', filename=results.lgbm_conf_matrix) }}" alt="LGBM Confusion Matrix">
+
+    <h2>CatBoost Model</h2>
+    <p>F1 Score: {{ results.catboost_f1 }}</p>
+    <img src="{{ url_for('static', filename=results.catboost_conf_matrix) }}" alt="CatBoost Confusion Matrix">
+
+    <p><a href="{{ url_for('main.index') }}">Back to Home</a></p>
+  </body>
+</html>

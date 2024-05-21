@@ -1,0 +1,7 @@
+Flask
+joblib
+pandas
+seaborn
+scikit-learn
+lightgbm==4.1.0
+catboost==1.2.5
