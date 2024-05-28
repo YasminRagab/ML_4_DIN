@@ -1,16 +1,29 @@
+<!-- results_checker.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Results - Model Checker</title>
+    <title>Model Checker Results</title>
 </head>
 <body>
     <h1>Model Checker Results</h1>
-    <p>LGBM F1 Score: {{ results.lgbm_f1 }}</p>
-    <p>CatBoost F1 Score: {{ results.catboost_f1 }}</p>
-    <p>Best Model: {{ results.best_model }}</p>
-    <a href="/download/{{ results.output_file }}">Download Results</a>
+
+    <h2>LGBM Model</h2>
+    <p>F1 Score: {{ results['lgbm_f1'] }}</p>
+    {% if results['lgbm_conf_matrix'] %}
+    <img src="data:image/png;base64,{{ results['lgbm_conf_matrix'] }}" alt="LGBM Confusion Matrix">
+    {% endif %}
+
+    <h2>CatBoost Model</h2>
+    <p>F1 Score: {{ results['catboost_f1'] }}</p>
+    {% if results['catboost_conf_matrix'] %}
+    <img src="data:image/png;base64,{{ results['catboost_conf_matrix'] }}" alt="CatBoost Confusion Matrix">
+    {% endif %}
+
+    <h2>Best Model: {{ results['best_model'] }}</h2>
+
+    <a href="data:text/csv;base64,{{ results['output_csv'] | b64encode }}">Download Output CSV</a>
     <br>
-    <a href="/">Back to Home</a>
+    <a href="{{ url_for('main.index') }}">Back to Home</a>
 </body>
 </html>

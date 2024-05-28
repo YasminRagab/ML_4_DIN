@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KG Prediction Results</title>
+</head>
+<body>
+    <h1>KG Prediction Results</h1>
+
+    <h2>Agreed Predictions</h2>
+    <a href="{{ url_for('main.download_file', filename=results['agreed_file']) }}">Download Agreed Predictions CSV</a>
+
+    <h2>Disagreed Predictions</h2>
+    <a href="{{ url_for('main.download_file', filename=results['disagreed_file']) }}">Download Disagreed Predictions CSV</a>
+
+    <br>
+    <a href="{{ url_for('main.index') }}">Back to Home</a>
+</body>
+</html>

@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Results - KG Prediction</title>
+    <title>KG Prediction Results</title>
 </head>
 <body>
     <h1>KG Prediction Results</h1>
-    <a href="/download/{{ results.agreed_file }}">Download Agreed Predictions</a>
+
+    <h2>Agreed Predictions</h2>
+    <a href="{{ url_for('main.download_file', filename=results['agreed_file'], output_agreed=results['output_agreed']) }}">Download Agreed Predictions CSV</a>
+
+    <h2>Disagreed Predictions</h2>
+    <a href="{{ url_for('main.download_file', filename=results['disagreed_file'], output_disagreed=results['output_disagreed']) }}">Download Disagreed Predictions CSV</a>
     <br>
-    <a href="/download/{{ results.disagreed_file }}">Download Disagreed Predictions</a>
-    <br>
-    <a href="/">Back to Home</a>
+    <a href="{{ url_for('main.index') }}">Back to Home</a>
 </body>
 </html>

@@ -2,9 +2,12 @@ import pandas as pd
 import json
 import numpy as np
 
-def load_json_to_df(file_path):
-    with open(file_path, 'r') as file:
-        json_data = json.load(file)
+def load_json_to_df(file_obj):
+    if isinstance(file_obj, str):
+        with open(file_obj, 'r') as file:
+            json_data = json.load(file)
+    else:
+        json_data = json.load(file_obj)
     df = pd.DataFrame.from_dict(json_data, orient='index').reset_index()
     df.rename(columns={'index': 'GUID'}, inplace=True)
     return df

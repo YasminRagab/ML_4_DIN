@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Model Checker Results</title>
+</head>
+<body>
+    <h1>Model Checker Results</h1>
+
+    <h2>LGBM Model</h2>
+    <p>F1 Score: {{ results['lgbm_f1'] }}</p>
+    <img src="{{ url_for('static', filename='lgbm_conf_matrix.png') }}" alt="LGBM Confusion Matrix">
+
+    <h2>CatBoost Model</h2>
+    <p>F1 Score: {{ results['catboost_f1'] }}</p>
+    <img src="{{ url_for('static', filename='catboost_conf_matrix.png') }}" alt="CatBoost Confusion Matrix">
+
+    <h2>Best Model: {{ results['best_model'] }}</h2>
+
+    <a href="{{ url_for('main.download_file', filename=results['output_file']) }}">Download Output CSV</a>
+    <br>
+    <a href="{{ url_for('main.index') }}">Back to Home</a>
+</body>
+</html>

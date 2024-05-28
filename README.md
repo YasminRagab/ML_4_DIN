@@ -28,7 +28,7 @@ This Flask application classifies walls as per DIN 276 standards using machine l
 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   source venv/bin/activate  # On Windows use `source venv\Scripts\activate`
 
 3. **Install the required packages**:
 
@@ -47,6 +47,7 @@ This Flask application classifies walls as per DIN 276 standards using machine l
 
    ```bash
    flask run
+   python app.py
 
 3. **Open the app in your browser**:
 
