@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import numpy as np
 
 def load_json_to_df(file_path):
     with open(file_path, 'r') as file:
@@ -11,7 +12,6 @@ def load_json_to_df(file_path):
 def preprocess_data(df, preprocessing_pipeline):
     df.loc[df['LoadBearing'] == '', 'LoadBearing'] = 0
     df.loc[~df['Type'].isin(['Basic Wall', 'Curtain Wall']), 'Type'] = 'Generic Models'
-    df.loc[df['cs_layers'] == '', 'cs_layers'] = 1
     df.loc[(df['Type'] == 'Generic Models') & (df['cs_function'] == ''), 'cs_function'] = 'Finish1'
     df.loc[(df['Type'] == 'Generic Models') & (df['material_class'] == ''), 'material_class'] = 'Verschiedene'
     df.loc[(df['Function'] == 1) | (df['Function'] == ''), 'Function'] = 'Exterior'
@@ -22,7 +22,7 @@ def preprocess_data(df, preprocessing_pipeline):
     df.loc[(df['Kostengruppe'] == '342') & (df['cs_function'] == 'Finish1'), 'cs_function'] = 'Structure'
     df.loc[(df['Kostengruppe'] == '342') & (df['cs_function'] == 'Substrate'), 'cs_function'] = 'Structure'
     df = df[(df['Kostengruppe'] != "i.B.") & (df['Kostengruppe'] != '690') & (df['Kostengruppe'] != '354') & (df['Kostengruppe'] != '344')]
-    df = df.replace('', pd.NA)
+    df = df.replace('', np.NaN)
     df = df.dropna(thresh=len(df.columns) - 1)
     condition = df.isnull().sum(axis=1) == 1
     df = df[condition | df['Kostengruppe'].notna()]
@@ -32,7 +32,7 @@ def preprocess_data(df, preprocessing_pipeline):
     df['material_class'] = df['material_class'].astype(str)
     df['Type'] = df['Type'].astype(str)
 
-    feature_columns = ['Name', 'cs_function', 'material_class', 'Function', 'Type', 'LoadBearing']
+    feature_columns = ['Name', 'cs_function', 'material_class', 'Function', 'Type', 'LoadBearing', 'room_bound']
     X_test = df[feature_columns]
     X_test_encoded = preprocessing_pipeline.transform(X_test)
     return X_test_encoded, X_test, feature_columns, df

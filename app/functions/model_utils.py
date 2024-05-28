@@ -1,4 +1,5 @@
 from sklearn.metrics import f1_score, confusion_matrix
+import numpy as np
 import joblib
 
 def predict_lgbm(model, X_test):
@@ -19,7 +20,7 @@ def evaluate_model(df, predictions, model_name):
     else:
         raise ValueError("Mismatch in lengths between predictions and actual data")
 
-def retrain_models(df, lgbm_model, catboost_model):
+def retrain_models(df):
     # Load the existing training data
     existing_data = pd.read_csv('path_to_existing_training_data.csv')
 
@@ -30,7 +31,7 @@ def retrain_models(df, lgbm_model, catboost_model):
     new_data.to_csv('path_to_existing_training_data.csv', index=False)
 
     # Define feature and target columns
-    feature_columns = ['Name', 'cs_function', 'material_class', 'Function', 'Type', 'LoadBearing']
+    feature_columns = ['Name', 'cs_function', 'material_class', 'Function', 'Type', 'LoadBearing', 'room_bound']
     target_column = ['Kostengruppe']
 
     # Split the data

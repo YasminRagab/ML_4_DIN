@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results - Model Checker</title>
+</head>
+<body>
+    <h1>Model Checker Results</h1>
+    <p>LGBM F1 Score: {{ results.lgbm_f1 }}</p>
+    <p>CatBoost F1 Score: {{ results.catboost_f1 }}</p>
+    <p>Best Model: {{ results.best_model }}</p>
+    <a href="/download/{{ results.output_file }}">Download Results</a>
+    <br>
+    <a href="/">Back to Home</a>
+</body>
+</html>
