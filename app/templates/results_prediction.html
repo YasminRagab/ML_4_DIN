@@ -8,10 +8,11 @@
     <h1>KG Prediction Results</h1>
 
     <h2>Agreed Predictions</h2>
-    <a href="{{ url_for('main.download_file', filename=results['agreed_file'], output_agreed=results['output_agreed']) }}">Download Agreed Predictions CSV</a>
+    <a href="data:text/csv;base64,{{ results['agreed_file'] }}" download="kg_prediction_agreed.csv">Download Agreed Predictions CSV</a>
 
     <h2>Disagreed Predictions</h2>
-    <a href="{{ url_for('main.download_file', filename=results['disagreed_file'], output_disagreed=results['output_disagreed']) }}">Download Disagreed Predictions CSV</a>
+    <a href="data:text/csv;base64,{{ results['disagreed_file'] }}" download="kg_prediction_disagreed.csv">Download Disagreed Predictions CSV</a>
+
     <br>
     <a href="{{ url_for('main.index') }}">Back to Home</a>
 </body>

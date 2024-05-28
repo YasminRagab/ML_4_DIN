@@ -1,4 +1,3 @@
-<!-- results_checker.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,17 +11,21 @@
     <p>F1 Score: {{ results['lgbm_f1'] }}</p>
     {% if results['lgbm_conf_matrix'] %}
     <img src="data:image/png;base64,{{ results['lgbm_conf_matrix'] }}" alt="LGBM Confusion Matrix">
+    {% else %}
+    <p>No confusion matrix available.</p>
     {% endif %}
 
     <h2>CatBoost Model</h2>
     <p>F1 Score: {{ results['catboost_f1'] }}</p>
     {% if results['catboost_conf_matrix'] %}
     <img src="data:image/png;base64,{{ results['catboost_conf_matrix'] }}" alt="CatBoost Confusion Matrix">
+    {% else %}
+    <p>No confusion matrix available.</p>
     {% endif %}
 
     <h2>Best Model: {{ results['best_model'] }}</h2>
 
-    <a href="data:text/csv;base64,{{ results['output_csv'] | b64encode }}">Download Output CSV</a>
+    <a href="data:text/csv;base64,{{ results['output_csv'] }}" download="model_checker_output.csv">Download Output CSV</a>
     <br>
     <a href="{{ url_for('main.index') }}">Back to Home</a>
 </body>

@@ -20,19 +20,17 @@ def evaluate_model(df, predictions, model_name):
     else:
         raise ValueError("Mismatch in lengths between predictions and actual data")
 
-def retrain_models(df):
-    # Load the existing training data
+def retrain_models(df, lgbm_model, catboost_model, preprocessing_pipeline):
     existing_data = pd.read_csv('path_to_existing_training_data.csv')
-
-    # Append new data
     new_data = existing_data.append(df, ignore_index=True)
-
-    # Save the combined data
     new_data.to_csv('path_to_existing_training_data.csv', index=False)
 
     # Define feature and target columns
-    feature_columns = ['Name', 'cs_function', 'material_class', 'Function', 'Type', 'LoadBearing', 'room_bound']
+    feature_columns = ['Name', 'cs_function', 'material_class', 'Function', 'Type', 'LoadBearing']
     target_column = ['Kostengruppe']
+
+    # Preprocess the data
+    new_data[feature_columns] = preprocessing_pipeline.transform(new_data[feature_columns])
 
     # Split the data
     X = new_data[feature_columns]
