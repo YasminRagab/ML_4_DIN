@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template
 import pandas as pd
 import io
+import numpy as np
 import joblib
 import base64
 import matplotlib.pyplot as plt
@@ -81,30 +82,42 @@ def kg_prediction():
         if file:
             json_data = file.read().decode('utf-8')
             df = load_json_to_df(io.StringIO(json_data))
-            if 'Kostengruppe' not in df.columns or df['Kostengruppe'].isnull().all():
-                X_test_encoded, X_test, feature_types, df_processed = preprocess_data(df, preprocessing_pipeline)
+            if 'Kostengruppe' in df.columns:
+                df.drop(columns=['Kostengruppe'], inplace=True)
+                
+            X_test_encoded, X_test, feature_types, df_processed = preprocess_data(df, preprocessing_pipeline)
 
-                lgbm_predictions = lgbm_model.predict(X_test_encoded)
-                catboost_predictions = predict_catboost(catboost_model, X_test, feature_types).flatten()
+            lgbm_predictions = lgbm_model.predict(X_test_encoded)
+            catboost_predictions = predict_catboost(catboost_model, X_test, feature_types).flatten()
 
-                df_processed['LGBM_Predicted_Kostengruppe'] = lgbm_predictions
-                df_processed['CatBoost_Predicted_Kostengruppe'] = catboost_predictions
+            df_processed['LGBM_Predicted_Kostengruppe'] = lgbm_predictions
+            df_processed['CatBoost_Predicted_Kostengruppe'] = catboost_predictions
 
-                df_processed['Agreed_Kostengruppe'] = df_processed.apply(
-                    lambda row: row['LGBM_Predicted_Kostengruppe'] if row['LGBM_Predicted_Kostengruppe'] == row['CatBoost_Predicted_Kostengruppe'] else 'Disagreement', axis=1
-                )
+            df_processed['Agreed_Kostengruppe'] = df_processed.apply(
+                lambda row: row['LGBM_Predicted_Kostengruppe'] if row['LGBM_Predicted_Kostengruppe'] == row['CatBoost_Predicted_Kostengruppe'] else 'Disagreement', axis=1
+            )
 
-                agreed_df = df_processed[df_processed['Agreed_Kostengruppe'] != 'Disagreement']
-                disagreed_df = df_processed[df_processed['Agreed_Kostengruppe'] == 'Disagreement']
+            agreed_df = df_processed[df_processed['Agreed_Kostengruppe'] != 'Disagreement']
+            disagreed_df = df_processed[df_processed['Agreed_Kostengruppe'] == 'Disagreement']
 
-                agreed_csv = agreed_df[['GUID', 'Id', 'Agreed_Kostengruppe']].to_csv(index=False)
-                disagreed_csv = disagreed_df[['GUID', 'Id', 'LGBM_Predicted_Kostengruppe', 'CatBoost_Predicted_Kostengruppe']].to_csv(index=False)
+            agreed_csv = io.StringIO()
+            disagreed_csv = io.StringIO()
 
-                results = {
-                    'agreed_file': base64.b64encode(agreed_csv.encode()).decode(),
-                    'disagreed_file': base64.b64encode(disagreed_csv.encode()).decode()
+            agreed_df[['GUID', 'Id', 'Agreed_Kostengruppe']].to_csv(agreed_csv, index=False)
+            disagreed_df[['GUID', 'Id', 'LGBM_Predicted_Kostengruppe', 'CatBoost_Predicted_Kostengruppe']].rename(
+                columns={
+                    'LGBM_Predicted_Kostengruppe': 'Prediction_Option_01',
+                    'CatBoost_Predicted_Kostengruppe': 'Prediction_Option_02'
                 }
+            ).to_csv(disagreed_csv, index=False)
 
-                return render_template('results_prediction.html', results=results)
+            results = {
+                'agreed_file': base64.b64encode(agreed_csv.getvalue().encode()).decode(),
+                'disagreed_file': base64.b64encode(disagreed_csv.getvalue().encode()).decode()
+            }
+
+            return render_template('results_prediction.html', results=results)
 
     return render_template('index.html')
+
+

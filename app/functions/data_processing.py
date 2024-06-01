@@ -18,17 +18,22 @@ def preprocess_data(df, preprocessing_pipeline):
     df.loc[(df['Type'] == 'Generic Models') & (df['cs_function'] == ''), 'cs_function'] = 'Finish1'
     df.loc[(df['Type'] == 'Generic Models') & (df['material_class'] == ''), 'material_class'] = 'Verschiedene'
     df.loc[(df['Function'] == 1) | (df['Function'] == ''), 'Function'] = 'Exterior'
-    df.loc[(df['Kostengruppe'] == '335') & (df['cs_function'] == 'Structure') & (df['Name'] == 'HA_WAN_MET_0,090_xxx'), 'cs_function'] = 'Finish1'
-    df.loc[(df['Kostengruppe'] == '332') & (df['cs_function'] == 'Finish1'), 'cs_function'] = 'Structure'
-    df.loc[(df['Kostengruppe'] == '332') & (df['cs_function'] == 'Substrate'), 'cs_function'] = 'Structure'
-    df.loc[(df['Kostengruppe'] == '345') & (df['cs_function'] == 'Structure'), 'cs_function'] = 'Finish1'
-    df.loc[(df['Kostengruppe'] == '342') & (df['cs_function'] == 'Finish1'), 'cs_function'] = 'Structure'
-    df.loc[(df['Kostengruppe'] == '342') & (df['cs_function'] == 'Substrate'), 'cs_function'] = 'Structure'
-    df = df[(df['Kostengruppe'] != "i.B.") & (df['Kostengruppe'] != '690') & (df['Kostengruppe'] != '354') & (df['Kostengruppe'] != '344')]
+    
+    if 'Kostengruppe' in df.columns:
+        df.loc[(df['Kostengruppe'] == '335') & (df['cs_function'] == 'Structure') & (df['Name'] == 'HA_WAN_MET_0,090_xxx'), 'cs_function'] = 'Finish1'
+        df.loc[(df['Kostengruppe'] == '332') & (df['cs_function'] == 'Finish1'), 'cs_function'] = 'Structure'
+        df.loc[(df['Kostengruppe'] == '332') & (df['cs_function'] == 'Substrate'), 'cs_function'] = 'Structure'
+        df.loc[(df['Kostengruppe'] == '345') & (df['cs_function'] == 'Structure'), 'cs_function'] = 'Finish1'
+        df.loc[(df['Kostengruppe'] == '342') & (df['cs_function'] == 'Finish1'), 'cs_function'] = 'Structure'
+        df.loc[(df['Kostengruppe'] == '342') & (df['cs_function'] == 'Substrate'), 'cs_function'] = 'Structure'
+        df = df[(df['Kostengruppe'] != "i.B.") & (df['Kostengruppe'] != '690') & (df['Kostengruppe'] != '354') & (df['Kostengruppe'] != '344')]
+
     df = df.replace('', np.NaN)
     df = df.dropna(thresh=len(df.columns) - 1)
-    condition = df.isnull().sum(axis=1) == 1
-    df = df[condition | df['Kostengruppe'].notna()]
+    
+    if 'Kostengruppe' in df.columns:
+        condition = df.isnull().sum(axis=1) == 1
+        df = df[condition | df['Kostengruppe'].notna()]
 
     df['LoadBearing'] = df['LoadBearing'].astype(bool)
     df['cs_function'] = df['cs_function'].astype(str)
@@ -39,3 +44,5 @@ def preprocess_data(df, preprocessing_pipeline):
     X_test = df[feature_columns]
     X_test_encoded = preprocessing_pipeline.transform(X_test)
     return X_test_encoded, X_test, feature_columns, df
+
+
