@@ -37,25 +37,27 @@ def model_checker():
             lgbm_f1, lgbm_conf_matrix, lgbm_conf_matrix_img = None, None, None
             try:
                 X_test_dense = X_test_encoded.toarray() if hasattr(X_test_encoded, 'toarray') else X_test_encoded
+                df_processed_lgbm = df_processed.copy()
                 lgbm_predictions = lgbm_model.predict(X_test_dense)
-                lgbm_f1, lgbm_conf_matrix = evaluate_model(df_processed, lgbm_predictions, 'LGBM')
-                df_processed['LGBM_Predicted_Kostengruppe'] = lgbm_predictions
-                lgbm_conf_matrix_img = plot_confusion_matrix(lgbm_conf_matrix, sorted(pd.unique(df_processed['Kostengruppe'].values)), "Confusion Matrix - LGBM")
+                lgbm_f1, lgbm_conf_matrix = evaluate_model(df_processed_lgbm, lgbm_predictions, 'LGBM')
+                df_processed_lgbm['LGBM_Predicted_Kostengruppe'] = lgbm_predictions
+                lgbm_conf_matrix_img = plot_confusion_matrix(lgbm_conf_matrix, sorted(pd.unique(df_processed_lgbm['Kostengruppe'].values)), "Confusion Matrix - LGBM")
             except Exception as e:
                 print(f"Error processing LGBM model: {e}")
 
             catboost_f1, catboost_conf_matrix, catboost_conf_matrix_img = None, None, None
             try:
+                df_processed_catboost = df_processed.copy()
                 catboost_predictions = predict_catboost(catboost_model, X_test, feature_types).flatten()
-                catboost_f1, catboost_conf_matrix = evaluate_model(df_processed, catboost_predictions, 'CatBoost')
-                df_processed['CatBoost_Predicted_Kostengruppe'] = catboost_predictions
-                catboost_conf_matrix_img = plot_confusion_matrix(catboost_conf_matrix, sorted(pd.unique(df_processed['Kostengruppe'].values)), "Confusion Matrix - CatBoost")
+                catboost_f1, catboost_conf_matrix = evaluate_model(df_processed_catboost, catboost_predictions, 'CatBoost')
+                df_processed_catboost['CatBoost_Predicted_Kostengruppe'] = catboost_predictions
+                catboost_conf_matrix_img = plot_confusion_matrix(catboost_conf_matrix, sorted(pd.unique(df_processed_catboost['Kostengruppe'].values)), "Confusion Matrix - CatBoost")
             except Exception as e:
                 print(f"Error processing CatBoost model: {e}")
 
             if lgbm_f1 and catboost_f1:
                 best_model = 'LGBM' if lgbm_f1 > catboost_f1 else 'CatBoost'
-                df_processed['Best_Predicted_Kostengruppe'] = df_processed['LGBM_Predicted_Kostengruppe'] if lgbm_f1 > catboost_f1 else df_processed['CatBoost_Predicted_Kostengruppe']
+                df_processed['Best_Predicted_Kostengruppe'] = df_processed_lgbm['LGBM_Predicted_Kostengruppe'] if lgbm_f1 > catboost_f1 else df_processed_catboost['CatBoost_Predicted_Kostengruppe']
             else:
                 best_model = None
 
